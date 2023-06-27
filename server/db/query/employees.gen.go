@@ -28,6 +28,8 @@ func newEmployee(db *gorm.DB, opts ...gen.DOOption) employee {
 	tableName := _employee.employeeDo.TableName()
 	_employee.ALL = field.NewAsterisk(tableName)
 	_employee.ID = field.NewUint64(tableName, "id")
+	_employee.Name = field.NewString(tableName, "name")
+	_employee.TelegramUserID = field.NewString(tableName, "telegram_user_id")
 	_employee.Username = field.NewString(tableName, "username")
 	_employee.PasswordHash = field.NewString(tableName, "password_hash")
 	_employee.CreatedAt = field.NewTime(tableName, "created_at")
@@ -42,13 +44,15 @@ func newEmployee(db *gorm.DB, opts ...gen.DOOption) employee {
 type employee struct {
 	employeeDo
 
-	ALL          field.Asterisk
-	ID           field.Uint64
-	Username     field.String
-	PasswordHash field.String
-	CreatedAt    field.Time
-	UpdatedAt    field.Time
-	DeletedAt    field.Field
+	ALL            field.Asterisk
+	ID             field.Uint64
+	Name           field.String
+	TelegramUserID field.String
+	Username       field.String
+	PasswordHash   field.String
+	CreatedAt      field.Time
+	UpdatedAt      field.Time
+	DeletedAt      field.Field
 
 	fieldMap map[string]field.Expr
 }
@@ -66,6 +70,8 @@ func (e employee) As(alias string) *employee {
 func (e *employee) updateTableName(table string) *employee {
 	e.ALL = field.NewAsterisk(table)
 	e.ID = field.NewUint64(table, "id")
+	e.Name = field.NewString(table, "name")
+	e.TelegramUserID = field.NewString(table, "telegram_user_id")
 	e.Username = field.NewString(table, "username")
 	e.PasswordHash = field.NewString(table, "password_hash")
 	e.CreatedAt = field.NewTime(table, "created_at")
@@ -87,8 +93,10 @@ func (e *employee) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *employee) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 6)
+	e.fieldMap = make(map[string]field.Expr, 8)
 	e.fieldMap["id"] = e.ID
+	e.fieldMap["name"] = e.Name
+	e.fieldMap["telegram_user_id"] = e.TelegramUserID
 	e.fieldMap["username"] = e.Username
 	e.fieldMap["password_hash"] = e.PasswordHash
 	e.fieldMap["created_at"] = e.CreatedAt

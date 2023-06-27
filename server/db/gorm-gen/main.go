@@ -24,18 +24,14 @@ func main() {
 
 	g.UseDB(gormdb) // reuse gorm db
 
-	migrateModels := []interface{}{
-		models.CncChecker{},
-		models.Employee{},
-		models.CncStatus{},
-	}
+	migrateModels := models.MigrateModels
 
 	// Generate basic type-safe DAO API for structs
 	g.ApplyBasic(
 		migrateModels...,
 	)
 
-	gormdb.AutoMigrate(migrateModels...)
+	// gormdb.AutoMigrate(migrateModels...)
 
 	// Generate the code
 	g.Execute()

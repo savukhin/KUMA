@@ -29,7 +29,6 @@ func newCncChecker(db *gorm.DB, opts ...gen.DOOption) cncChecker {
 	_cncChecker.ALL = field.NewAsterisk(tableName)
 	_cncChecker.ID = field.NewUint64(tableName, "id")
 	_cncChecker.Status = field.NewField(tableName, "status")
-	_cncChecker.CarType = field.NewField(tableName, "car_type")
 	_cncChecker.Username = field.NewString(tableName, "username")
 	_cncChecker.PasswordHash = field.NewString(tableName, "password_hash")
 	_cncChecker.CreatedAt = field.NewTime(tableName, "created_at")
@@ -47,7 +46,6 @@ type cncChecker struct {
 	ALL          field.Asterisk
 	ID           field.Uint64
 	Status       field.Field
-	CarType      field.Field
 	Username     field.String
 	PasswordHash field.String
 	CreatedAt    field.Time
@@ -71,7 +69,6 @@ func (c *cncChecker) updateTableName(table string) *cncChecker {
 	c.ALL = field.NewAsterisk(table)
 	c.ID = field.NewUint64(table, "id")
 	c.Status = field.NewField(table, "status")
-	c.CarType = field.NewField(table, "car_type")
 	c.Username = field.NewString(table, "username")
 	c.PasswordHash = field.NewString(table, "password_hash")
 	c.CreatedAt = field.NewTime(table, "created_at")
@@ -93,10 +90,9 @@ func (c *cncChecker) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cncChecker) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 8)
+	c.fieldMap = make(map[string]field.Expr, 7)
 	c.fieldMap["id"] = c.ID
 	c.fieldMap["status"] = c.Status
-	c.fieldMap["car_type"] = c.CarType
 	c.fieldMap["username"] = c.Username
 	c.fieldMap["password_hash"] = c.PasswordHash
 	c.fieldMap["created_at"] = c.CreatedAt

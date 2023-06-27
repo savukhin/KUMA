@@ -18,14 +18,12 @@ import (
 var (
 	Q          = new(Query)
 	CncChecker *cncChecker
-	CncStatus  *cncStatus
 	Employee   *employee
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	CncChecker = &Q.CncChecker
-	CncStatus = &Q.CncStatus
 	Employee = &Q.Employee
 }
 
@@ -33,7 +31,6 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:         db,
 		CncChecker: newCncChecker(db, opts...),
-		CncStatus:  newCncStatus(db, opts...),
 		Employee:   newEmployee(db, opts...),
 	}
 }
@@ -42,7 +39,6 @@ type Query struct {
 	db *gorm.DB
 
 	CncChecker cncChecker
-	CncStatus  cncStatus
 	Employee   employee
 }
 
@@ -52,7 +48,6 @@ func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:         db,
 		CncChecker: q.CncChecker.clone(db),
-		CncStatus:  q.CncStatus.clone(db),
 		Employee:   q.Employee.clone(db),
 	}
 }
@@ -69,21 +64,18 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:         db,
 		CncChecker: q.CncChecker.replaceDB(db),
-		CncStatus:  q.CncStatus.replaceDB(db),
 		Employee:   q.Employee.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
 	CncChecker ICncCheckerDo
-	CncStatus  ICncStatusDo
 	Employee   IEmployeeDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		CncChecker: q.CncChecker.WithContext(ctx),
-		CncStatus:  q.CncStatus.WithContext(ctx),
 		Employee:   q.Employee.WithContext(ctx),
 	}
 }

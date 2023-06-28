@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http/httptest"
 	"os"
+
 	"path/filepath"
 	"server/api"
 	"server/db/models"
@@ -28,7 +29,6 @@ func GetExecutablePath() string {
 }
 
 func TestFull(t *testing.T) {
-
 	db, err := gorm.Open(sqlite.Open(GetExecutablePath()+"/test.db"), &gorm.Config{
 		NowFunc: func() time.Time {
 			return time.Now().Local()
@@ -43,7 +43,7 @@ func TestFull(t *testing.T) {
 	// logger, err := zap.Config{}.Build()
 	require.NoError(t, err)
 
-	app := api.SetupRouter(db, []byte("test-key"), logger)
+	app := api.SetupRouter(db, []byte("test-key"), logger, nil)
 
 	req := httptest.NewRequest("GET", "/ping", nil)
 	resp, err := app.Test(req)

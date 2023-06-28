@@ -29,7 +29,7 @@ func newEmployee(db *gorm.DB, opts ...gen.DOOption) employee {
 	_employee.ALL = field.NewAsterisk(tableName)
 	_employee.ID = field.NewUint64(tableName, "id")
 	_employee.Name = field.NewString(tableName, "name")
-	_employee.TelegramUserID = field.NewString(tableName, "telegram_user_id")
+	_employee.TelegramUserName = field.NewString(tableName, "telegram_user_name")
 	_employee.CheckedIN = field.NewBool(tableName, "checked_in")
 	_employee.Username = field.NewString(tableName, "username")
 	_employee.PasswordHash = field.NewString(tableName, "password_hash")
@@ -45,16 +45,16 @@ func newEmployee(db *gorm.DB, opts ...gen.DOOption) employee {
 type employee struct {
 	employeeDo
 
-	ALL            field.Asterisk
-	ID             field.Uint64
-	Name           field.String
-	TelegramUserID field.String
-	CheckedIN      field.Bool
-	Username       field.String
-	PasswordHash   field.String
-	CreatedAt      field.Int64
-	UpdatedAt      field.Int64
-	DeletedAt      field.Field
+	ALL              field.Asterisk
+	ID               field.Uint64
+	Name             field.String
+	TelegramUserName field.String
+	CheckedIN        field.Bool
+	Username         field.String
+	PasswordHash     field.String
+	CreatedAt        field.Int64
+	UpdatedAt        field.Int64
+	DeletedAt        field.Field
 
 	fieldMap map[string]field.Expr
 }
@@ -73,7 +73,7 @@ func (e *employee) updateTableName(table string) *employee {
 	e.ALL = field.NewAsterisk(table)
 	e.ID = field.NewUint64(table, "id")
 	e.Name = field.NewString(table, "name")
-	e.TelegramUserID = field.NewString(table, "telegram_user_id")
+	e.TelegramUserName = field.NewString(table, "telegram_user_name")
 	e.CheckedIN = field.NewBool(table, "checked_in")
 	e.Username = field.NewString(table, "username")
 	e.PasswordHash = field.NewString(table, "password_hash")
@@ -99,7 +99,7 @@ func (e *employee) fillFieldMap() {
 	e.fieldMap = make(map[string]field.Expr, 9)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["name"] = e.Name
-	e.fieldMap["telegram_user_id"] = e.TelegramUserID
+	e.fieldMap["telegram_user_name"] = e.TelegramUserName
 	e.fieldMap["checked_in"] = e.CheckedIN
 	e.fieldMap["username"] = e.Username
 	e.fieldMap["password_hash"] = e.PasswordHash

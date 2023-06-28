@@ -14,6 +14,8 @@ type Config struct {
 	PostgresPassword    string `envconfig:"POSTGRES_PASSWORD" default:"admin"`
 	PostgresAutoMigrate bool   `envconfig:"POSTGRES_AUTO_MIGRATE" default:"false"`
 
+	TelegramBotToken string `envconfig:"TELEGRAM_BOT_TOKEN" required:"true"`
+
 	Mode string `envconfig:"MODE" default:"debug"`
 	Port string `envconfig:"PORT" default:":8080"`
 }

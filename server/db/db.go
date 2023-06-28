@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"server/config"
 	"server/db/models"
+	"server/db/query"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -35,4 +36,11 @@ func ConnectDatabase(cfg *config.Config) (*gorm.DB, error) {
 	}
 
 	return gormDB, nil
+}
+
+func InitCncStatusTable(db *gorm.DB) {
+	cnc := query.Use(db).CncStatus
+	cnc.Create(models.WorkingStatus)
+	cnc.Create(models.StoppedStatus)
+	cnc.Create(models.BrokenStatus)
 }

@@ -30,10 +30,11 @@ func newEmployee(db *gorm.DB, opts ...gen.DOOption) employee {
 	_employee.ID = field.NewUint64(tableName, "id")
 	_employee.Name = field.NewString(tableName, "name")
 	_employee.TelegramUserID = field.NewString(tableName, "telegram_user_id")
+	_employee.CheckedIN = field.NewBool(tableName, "checked_in")
 	_employee.Username = field.NewString(tableName, "username")
 	_employee.PasswordHash = field.NewString(tableName, "password_hash")
-	_employee.CreatedAt = field.NewTime(tableName, "created_at")
-	_employee.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_employee.CreatedAt = field.NewInt64(tableName, "created_at")
+	_employee.UpdatedAt = field.NewInt64(tableName, "updated_at")
 	_employee.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_employee.fillFieldMap()
@@ -48,10 +49,11 @@ type employee struct {
 	ID             field.Uint64
 	Name           field.String
 	TelegramUserID field.String
+	CheckedIN      field.Bool
 	Username       field.String
 	PasswordHash   field.String
-	CreatedAt      field.Time
-	UpdatedAt      field.Time
+	CreatedAt      field.Int64
+	UpdatedAt      field.Int64
 	DeletedAt      field.Field
 
 	fieldMap map[string]field.Expr
@@ -72,10 +74,11 @@ func (e *employee) updateTableName(table string) *employee {
 	e.ID = field.NewUint64(table, "id")
 	e.Name = field.NewString(table, "name")
 	e.TelegramUserID = field.NewString(table, "telegram_user_id")
+	e.CheckedIN = field.NewBool(table, "checked_in")
 	e.Username = field.NewString(table, "username")
 	e.PasswordHash = field.NewString(table, "password_hash")
-	e.CreatedAt = field.NewTime(table, "created_at")
-	e.UpdatedAt = field.NewTime(table, "updated_at")
+	e.CreatedAt = field.NewInt64(table, "created_at")
+	e.UpdatedAt = field.NewInt64(table, "updated_at")
 	e.DeletedAt = field.NewField(table, "deleted_at")
 
 	e.fillFieldMap()
@@ -93,10 +96,11 @@ func (e *employee) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *employee) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 8)
+	e.fieldMap = make(map[string]field.Expr, 9)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["name"] = e.Name
 	e.fieldMap["telegram_user_id"] = e.TelegramUserID
+	e.fieldMap["checked_in"] = e.CheckedIN
 	e.fieldMap["username"] = e.Username
 	e.fieldMap["password_hash"] = e.PasswordHash
 	e.fieldMap["created_at"] = e.CreatedAt

@@ -28,12 +28,17 @@ func newCncChecker(db *gorm.DB, opts ...gen.DOOption) cncChecker {
 	tableName := _cncChecker.cncCheckerDo.TableName()
 	_cncChecker.ALL = field.NewAsterisk(tableName)
 	_cncChecker.ID = field.NewUint64(tableName, "id")
-	_cncChecker.Status = field.NewField(tableName, "status")
+	_cncChecker.StatusID = field.NewUint64(tableName, "status_id")
 	_cncChecker.Username = field.NewString(tableName, "username")
 	_cncChecker.PasswordHash = field.NewString(tableName, "password_hash")
-	_cncChecker.CreatedAt = field.NewTime(tableName, "created_at")
-	_cncChecker.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_cncChecker.CreatedAt = field.NewInt64(tableName, "created_at")
+	_cncChecker.UpdatedAt = field.NewInt64(tableName, "updated_at")
 	_cncChecker.DeletedAt = field.NewField(tableName, "deleted_at")
+	_cncChecker.Status = cncCheckerBelongsToStatus{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Status", "models.CncStatus"),
+	}
 
 	_cncChecker.fillFieldMap()
 
@@ -45,12 +50,13 @@ type cncChecker struct {
 
 	ALL          field.Asterisk
 	ID           field.Uint64
-	Status       field.Field
+	StatusID     field.Uint64
 	Username     field.String
 	PasswordHash field.String
-	CreatedAt    field.Time
-	UpdatedAt    field.Time
+	CreatedAt    field.Int64
+	UpdatedAt    field.Int64
 	DeletedAt    field.Field
+	Status       cncCheckerBelongsToStatus
 
 	fieldMap map[string]field.Expr
 }
@@ -68,11 +74,11 @@ func (c cncChecker) As(alias string) *cncChecker {
 func (c *cncChecker) updateTableName(table string) *cncChecker {
 	c.ALL = field.NewAsterisk(table)
 	c.ID = field.NewUint64(table, "id")
-	c.Status = field.NewField(table, "status")
+	c.StatusID = field.NewUint64(table, "status_id")
 	c.Username = field.NewString(table, "username")
 	c.PasswordHash = field.NewString(table, "password_hash")
-	c.CreatedAt = field.NewTime(table, "created_at")
-	c.UpdatedAt = field.NewTime(table, "updated_at")
+	c.CreatedAt = field.NewInt64(table, "created_at")
+	c.UpdatedAt = field.NewInt64(table, "updated_at")
 	c.DeletedAt = field.NewField(table, "deleted_at")
 
 	c.fillFieldMap()
@@ -90,14 +96,15 @@ func (c *cncChecker) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cncChecker) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 7)
+	c.fieldMap = make(map[string]field.Expr, 8)
 	c.fieldMap["id"] = c.ID
-	c.fieldMap["status"] = c.Status
+	c.fieldMap["status_id"] = c.StatusID
 	c.fieldMap["username"] = c.Username
 	c.fieldMap["password_hash"] = c.PasswordHash
 	c.fieldMap["created_at"] = c.CreatedAt
 	c.fieldMap["updated_at"] = c.UpdatedAt
 	c.fieldMap["deleted_at"] = c.DeletedAt
+
 }
 
 func (c cncChecker) clone(db *gorm.DB) cncChecker {
@@ -108,6 +115,77 @@ func (c cncChecker) clone(db *gorm.DB) cncChecker {
 func (c cncChecker) replaceDB(db *gorm.DB) cncChecker {
 	c.cncCheckerDo.ReplaceDB(db)
 	return c
+}
+
+type cncCheckerBelongsToStatus struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a cncCheckerBelongsToStatus) Where(conds ...field.Expr) *cncCheckerBelongsToStatus {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a cncCheckerBelongsToStatus) WithContext(ctx context.Context) *cncCheckerBelongsToStatus {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a cncCheckerBelongsToStatus) Session(session *gorm.Session) *cncCheckerBelongsToStatus {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a cncCheckerBelongsToStatus) Model(m *models.CncChecker) *cncCheckerBelongsToStatusTx {
+	return &cncCheckerBelongsToStatusTx{a.db.Model(m).Association(a.Name())}
+}
+
+type cncCheckerBelongsToStatusTx struct{ tx *gorm.Association }
+
+func (a cncCheckerBelongsToStatusTx) Find() (result *models.CncStatus, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a cncCheckerBelongsToStatusTx) Append(values ...*models.CncStatus) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a cncCheckerBelongsToStatusTx) Replace(values ...*models.CncStatus) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a cncCheckerBelongsToStatusTx) Delete(values ...*models.CncStatus) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a cncCheckerBelongsToStatusTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a cncCheckerBelongsToStatusTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type cncCheckerDo struct{ gen.DO }

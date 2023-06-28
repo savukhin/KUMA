@@ -36,13 +36,14 @@ func login(db *gorm.DB, secretKey interface{}, validate *validator.Validate) fib
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
 
-		err = GenerateTokensAndSetHeaders(checker.ID, secretKey, c)
+		access, refresh, err := GenerateTokens(checker.ID, secretKey)
 
 		if err != nil {
 			return fiber.ErrInternalServerError
 		}
 
-		return c.SendStatus(fiber.StatusOK)
+		return c.JSON(map[string]string{"access-token": access, "refresh-token": refresh})
+		// return c.SendStatus(fiber.StatusOK)
 	}
 }
 

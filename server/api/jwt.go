@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"server/db/models"
 	"time"
 
@@ -9,8 +10,9 @@ import (
 )
 
 const (
-	accessTokenHeaderName  = "access-token"
-	refreshTokenHeaderName = "refresh-token"
+	AuthorizationHeaderName = "Authorization"
+	AccessTokenHeaderName   = "access-token"
+	RefreshTokenHeaderName  = "refresh-token"
 )
 
 type UserClaims struct {
@@ -29,7 +31,7 @@ func generateToken(userID uint64, expirationTime time.Time, secret interface{}) 
 	}
 
 	// Declare the token with the algorithm used for signing, and the claims
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Create the JWT string
 	tokenString, err := token.SignedString(secret)
@@ -57,12 +59,14 @@ func generateRefreshToken(userID uint64, secretKey interface{}) (string, time.Ti
 func GenerateTokens(userID uint64, secretKey interface{}) (access, refresh string, e error) {
 	accessToken, _, err := generateAccessToken(userID, secretKey)
 	if err != nil {
+		fmt.Println("Access token err", err)
 		e = err
 		return
 	}
 
 	refreshToken, _, err := generateRefreshToken(userID, secretKey)
 	if err != nil {
+		fmt.Println("Refresh token err", err)
 		e = err
 		return
 	}
@@ -79,8 +83,8 @@ func GenerateTokensAndSetHeaders(userID uint64, secretKey interface{}, c *fiber.
 		return err
 	}
 
-	c.Response().Header.Add(accessTokenHeaderName, access)
-	c.Response().Header.Add(refreshTokenHeaderName, refresh)
+	c.Response().Header.Add(AccessTokenHeaderName, access)
+	c.Response().Header.Add(RefreshTokenHeaderName, refresh)
 
 	return nil
 }
@@ -98,9 +102,9 @@ func TokenRefresherMiddleware(secretKey interface{}) fiber.Handler {
 		// We ensure that a new token is not issued until enough time has elapsed
 		// In this case, a new token will only be issued if the old token is within
 		// 15 mins of expiry.
-		if claims.ExpiresAt.Sub(time.Now()) < 15*time.Minute {
+		if time.Until(claims.ExpiresAt) < 15*time.Minute {
 			// Gets the refresh token from the cookie.
-			refresh, ok := c.GetRespHeaders()[refreshTokenHeaderName]
+			refresh, ok := c.GetRespHeaders()[RefreshTokenHeaderName]
 			// rc, err := c.Cookie(refreshTokenCookieName)
 			if !ok {
 				return c.Next()

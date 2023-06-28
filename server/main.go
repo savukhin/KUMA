@@ -44,7 +44,7 @@ func main() {
 		log.Fatalf("rsa.GenerateKey: %v", err)
 	}
 
-	app := api.SetupRouter(gormDB, privateKey, logger)
+	app := api.SetupRouter(gormDB, privateKey.Public(), logger)
 
 	app.Listen(cfg.Port)
 }

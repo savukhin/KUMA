@@ -3,6 +3,7 @@ module server
 go 1.19
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/gofiber/contrib/jwt v1.0.2
 	github.com/gofiber/fiber/v2 v2.47.0

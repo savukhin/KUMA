@@ -31,7 +31,7 @@ func main() {
 		migrateModels...,
 	)
 
-	// gormdb.AutoMigrate(migrateModels...)
+	gormdb.AutoMigrate(migrateModels...)
 
 	// Generate the code
 	g.Execute()

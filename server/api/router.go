@@ -1,29 +1,39 @@
 package api
 
 import (
-	"crypto/rsa"
+	"fmt"
 
 	"github.com/go-playground/validator"
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	fiber_logger "github.com/gofiber/fiber/v2/middleware/logger"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-func SetupRouter(db *gorm.DB, privateKey *rsa.PrivateKey, logger *zap.Logger) *fiber.App {
+func JWTErrorChecker(c *fiber.Ctx, err error) error {
+	fmt.Println("error = ", err)
+	return err
+}
+
+func SetupRouter(db *gorm.DB, secretKey interface{}, logger *zap.Logger) *fiber.App {
 	app := fiber.New()
 	validate := validator.New()
-	secretKey := privateKey.Public()
+
+	app.Use(fiber_logger.New())
+
+	app.Get("/ping", func(c *fiber.Ctx) error { return c.SendString("Pong") })
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
 
 	jwtMiddleware := jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{
-			JWTAlg: jwtware.RS256,
-			Key:    privateKey.Public(),
+			JWTAlg: jwtware.HS256,
+			Key:    secretKey,
 		},
-		Claims: &UserClaims{},
+		ErrorHandler: JWTErrorChecker,
+		Claims:       &UserClaims{},
 	})
 
 	auth := v1.Group("/auth")

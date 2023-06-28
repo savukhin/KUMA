@@ -5,6 +5,7 @@ CREATE TABLE public.employees
     password_hash character varying(72) COLLATE pg_catalog."default" NOT NULL,
     name character varying(72) COLLATE pg_catalog."default" NOT NULL,
     telegram_user_id character varying(60) COLLATE pg_catalog."default",
+    checked_in BOOLEAN COLLATE pg_catalog."default",
 
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),

@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator"
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
@@ -11,7 +9,6 @@ import (
 )
 
 func JWTErrorChecker(c *fiber.Ctx, err error) error {
-	fmt.Println("error = ", err)
 	return err
 }
 

@@ -9,7 +9,7 @@ const (
 type Config struct {
 	PostgresHost        string `envconfig:"POSTGRES_HOST" default:"localhost"`
 	PostgresPort        string `envconfig:"POSTGRES_PORT" default:"5432"`
-	PostgresDB          string `envconfig:"POSTGRES_DB" default:"slyfox-tails"`
+	PostgresDB          string `envconfig:"POSTGRES_DB" default:"kuma"`
 	PostgresUser        string `envconfig:"POSTGRES_USER" default:"20624880"`
 	PostgresPassword    string `envconfig:"POSTGRES_PASSWORD" default:"admin"`
 	PostgresAutoMigrate bool   `envconfig:"POSTGRES_AUTO_MIGRATE" default:"false"`

@@ -51,5 +51,5 @@ func restrictedUser(c *fiber.Ctx) error {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(*UserClaims)
 	userid := claims.UserID
-	return c.SendString("Welcome " + strconv.FormatUint(userid, 10))
+	return c.SendString("Welcome " + strconv.FormatUint(uint64(userid), 10))
 }

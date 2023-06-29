@@ -40,7 +40,7 @@ func ConnectDatabase(cfg *config.Config) (*gorm.DB, error) {
 
 func InitCncStatusTable(db *gorm.DB) {
 	cnc := query.Use(db).CncStatus
-	cnc.Create(models.WorkingStatus)
 	cnc.Create(models.StoppedStatus)
+	cnc.Create(models.WorkingStatus)
 	cnc.Create(models.BrokenStatus)
 }

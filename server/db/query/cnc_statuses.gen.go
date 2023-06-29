@@ -27,7 +27,7 @@ func newCncStatus(db *gorm.DB, opts ...gen.DOOption) cncStatus {
 
 	tableName := _cncStatus.cncStatusDo.TableName()
 	_cncStatus.ALL = field.NewAsterisk(tableName)
-	_cncStatus.ID = field.NewUint64(tableName, "id")
+	_cncStatus.ID = field.NewInt(tableName, "id")
 	_cncStatus.StatusName = field.NewString(tableName, "status_name")
 
 	_cncStatus.fillFieldMap()
@@ -39,7 +39,7 @@ type cncStatus struct {
 	cncStatusDo
 
 	ALL        field.Asterisk
-	ID         field.Uint64
+	ID         field.Int
 	StatusName field.String
 
 	fieldMap map[string]field.Expr
@@ -57,7 +57,7 @@ func (c cncStatus) As(alias string) *cncStatus {
 
 func (c *cncStatus) updateTableName(table string) *cncStatus {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewUint64(table, "id")
+	c.ID = field.NewInt(table, "id")
 	c.StatusName = field.NewString(table, "status_name")
 
 	c.fillFieldMap()

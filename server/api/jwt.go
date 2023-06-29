@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"server/db/models"
 	"time"
 
@@ -16,14 +15,14 @@ const (
 )
 
 type UserClaims struct {
-	UserID    uint64    `json:"user_id,omitempty"`
-	ExpiresAt time.Time `json:"exp,omitempty"`
+	UserID    models.IDType `json:"user_id,omitempty"`
+	ExpiresAt time.Time     `json:"exp,omitempty"`
 	jwt.RegisteredClaims
 }
 
 type UserType models.CncChecker
 
-func generateToken(userID uint64, expirationTime time.Time, secret interface{}) (string, time.Time, error) {
+func generateToken(userID models.IDType, expirationTime time.Time, secret interface{}) (string, time.Time, error) {
 	// Create the JWT claims, which includes the username and expiry time
 	claims := &UserClaims{
 		UserID:    userID,
@@ -42,31 +41,29 @@ func generateToken(userID uint64, expirationTime time.Time, secret interface{}) 
 	return tokenString, expirationTime, nil
 }
 
-func generateAccessToken(userID uint64, secretKey interface{}) (string, time.Time, error) {
+func generateAccessToken(userID models.IDType, secretKey interface{}) (string, time.Time, error) {
 	// Declare the expiration time of the token
 	expirationTime := time.Now().Add(1 * time.Hour)
 
 	return generateToken(userID, expirationTime, secretKey)
 }
 
-func generateRefreshToken(userID uint64, secretKey interface{}) (string, time.Time, error) {
+func generateRefreshToken(userID models.IDType, secretKey interface{}) (string, time.Time, error) {
 	// Declare the expiration time of the token
 	expirationTime := time.Now().Add(24 * time.Hour)
 
 	return generateToken(userID, expirationTime, secretKey)
 }
 
-func GenerateTokens(userID uint64, secretKey interface{}) (access, refresh string, e error) {
+func GenerateTokens(userID models.IDType, secretKey interface{}) (access, refresh string, e error) {
 	accessToken, _, err := generateAccessToken(userID, secretKey)
 	if err != nil {
-		fmt.Println("Access token err", err)
 		e = err
 		return
 	}
 
 	refreshToken, _, err := generateRefreshToken(userID, secretKey)
 	if err != nil {
-		fmt.Println("Refresh token err", err)
 		e = err
 		return
 	}
@@ -76,7 +73,7 @@ func GenerateTokens(userID uint64, secretKey interface{}) (access, refresh strin
 	return
 }
 
-func GenerateTokensAndSetHeaders(userID uint64, secretKey interface{}, c *fiber.Ctx) (e error) {
+func GenerateTokensAndSetHeaders(userID models.IDType, secretKey interface{}, c *fiber.Ctx) (e error) {
 	access, refresh, err := GenerateTokens(userID, secretKey)
 
 	if err != nil {

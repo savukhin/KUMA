@@ -27,12 +27,13 @@ func newCncChecker(db *gorm.DB, opts ...gen.DOOption) cncChecker {
 
 	tableName := _cncChecker.cncCheckerDo.TableName()
 	_cncChecker.ALL = field.NewAsterisk(tableName)
-	_cncChecker.ID = field.NewUint64(tableName, "id")
-	_cncChecker.StatusID = field.NewUint64(tableName, "status_id")
+	_cncChecker.ID = field.NewInt(tableName, "id")
+	_cncChecker.Title = field.NewString(tableName, "title")
+	_cncChecker.StatusID = field.NewInt(tableName, "status_id")
 	_cncChecker.Username = field.NewString(tableName, "username")
 	_cncChecker.PasswordHash = field.NewString(tableName, "password_hash")
-	_cncChecker.CreatedAt = field.NewInt64(tableName, "created_at")
-	_cncChecker.UpdatedAt = field.NewInt64(tableName, "updated_at")
+	_cncChecker.CreatedAt = field.NewUint64(tableName, "created_at")
+	_cncChecker.UpdatedAt = field.NewUint64(tableName, "updated_at")
 	_cncChecker.DeletedAt = field.NewField(tableName, "deleted_at")
 	_cncChecker.Status = cncCheckerBelongsToStatus{
 		db: db.Session(&gorm.Session{}),
@@ -49,12 +50,13 @@ type cncChecker struct {
 	cncCheckerDo
 
 	ALL          field.Asterisk
-	ID           field.Uint64
-	StatusID     field.Uint64
+	ID           field.Int
+	Title        field.String
+	StatusID     field.Int
 	Username     field.String
 	PasswordHash field.String
-	CreatedAt    field.Int64
-	UpdatedAt    field.Int64
+	CreatedAt    field.Uint64
+	UpdatedAt    field.Uint64
 	DeletedAt    field.Field
 	Status       cncCheckerBelongsToStatus
 
@@ -73,12 +75,13 @@ func (c cncChecker) As(alias string) *cncChecker {
 
 func (c *cncChecker) updateTableName(table string) *cncChecker {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewUint64(table, "id")
-	c.StatusID = field.NewUint64(table, "status_id")
+	c.ID = field.NewInt(table, "id")
+	c.Title = field.NewString(table, "title")
+	c.StatusID = field.NewInt(table, "status_id")
 	c.Username = field.NewString(table, "username")
 	c.PasswordHash = field.NewString(table, "password_hash")
-	c.CreatedAt = field.NewInt64(table, "created_at")
-	c.UpdatedAt = field.NewInt64(table, "updated_at")
+	c.CreatedAt = field.NewUint64(table, "created_at")
+	c.UpdatedAt = field.NewUint64(table, "updated_at")
 	c.DeletedAt = field.NewField(table, "deleted_at")
 
 	c.fillFieldMap()
@@ -96,8 +99,9 @@ func (c *cncChecker) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cncChecker) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 8)
+	c.fieldMap = make(map[string]field.Expr, 9)
 	c.fieldMap["id"] = c.ID
+	c.fieldMap["title"] = c.Title
 	c.fieldMap["status_id"] = c.StatusID
 	c.fieldMap["username"] = c.Username
 	c.fieldMap["password_hash"] = c.PasswordHash

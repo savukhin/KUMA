@@ -33,9 +33,9 @@ func updateStatus(db *gorm.DB, validate *validator.Validate, onStopStatus func(s
 
 		cnc := query.Use(db).CncChecker
 		cncChecker, err := cnc.
-			Where(cnc.ID.Eq(cncID)).
+			Where(cnc.ID.Eq(int(cncID))).
 			First()
-			// Update(cnc.StatusID, statusID)
+		// Update(cnc.StatusID, statusID)
 
 		if err != nil {
 			return fiber.ErrForbidden

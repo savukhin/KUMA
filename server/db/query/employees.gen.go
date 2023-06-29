@@ -27,14 +27,14 @@ func newEmployee(db *gorm.DB, opts ...gen.DOOption) employee {
 
 	tableName := _employee.employeeDo.TableName()
 	_employee.ALL = field.NewAsterisk(tableName)
-	_employee.ID = field.NewUint64(tableName, "id")
+	_employee.ID = field.NewInt(tableName, "id")
 	_employee.Name = field.NewString(tableName, "name")
 	_employee.TelegramUserName = field.NewString(tableName, "telegram_user_name")
 	_employee.CheckedIN = field.NewBool(tableName, "checked_in")
 	_employee.Username = field.NewString(tableName, "username")
 	_employee.PasswordHash = field.NewString(tableName, "password_hash")
-	_employee.CreatedAt = field.NewInt64(tableName, "created_at")
-	_employee.UpdatedAt = field.NewInt64(tableName, "updated_at")
+	_employee.CreatedAt = field.NewUint64(tableName, "created_at")
+	_employee.UpdatedAt = field.NewUint64(tableName, "updated_at")
 	_employee.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_employee.fillFieldMap()
@@ -46,14 +46,14 @@ type employee struct {
 	employeeDo
 
 	ALL              field.Asterisk
-	ID               field.Uint64
+	ID               field.Int
 	Name             field.String
 	TelegramUserName field.String
 	CheckedIN        field.Bool
 	Username         field.String
 	PasswordHash     field.String
-	CreatedAt        field.Int64
-	UpdatedAt        field.Int64
+	CreatedAt        field.Uint64
+	UpdatedAt        field.Uint64
 	DeletedAt        field.Field
 
 	fieldMap map[string]field.Expr
@@ -71,14 +71,14 @@ func (e employee) As(alias string) *employee {
 
 func (e *employee) updateTableName(table string) *employee {
 	e.ALL = field.NewAsterisk(table)
-	e.ID = field.NewUint64(table, "id")
+	e.ID = field.NewInt(table, "id")
 	e.Name = field.NewString(table, "name")
 	e.TelegramUserName = field.NewString(table, "telegram_user_name")
 	e.CheckedIN = field.NewBool(table, "checked_in")
 	e.Username = field.NewString(table, "username")
 	e.PasswordHash = field.NewString(table, "password_hash")
-	e.CreatedAt = field.NewInt64(table, "created_at")
-	e.UpdatedAt = field.NewInt64(table, "updated_at")
+	e.CreatedAt = field.NewUint64(table, "created_at")
+	e.UpdatedAt = field.NewUint64(table, "updated_at")
 	e.DeletedAt = field.NewField(table, "deleted_at")
 
 	e.fillFieldMap()

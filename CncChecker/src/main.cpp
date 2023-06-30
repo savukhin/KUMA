@@ -4,11 +4,9 @@
 #include <ESPmDNS.h>
 #include <Update.h>
 #include <string.h>
-#include <FFat.h>
-// #include <SPIFFS.h>
 
-// #define FILESYSTEM SPIFFS
-#define FILESYSTEM FFat
+#include "utils.hpp"
+#include "credentials.hpp"
 
 const char* host = "esp32";
 const char* ssid = "xxx";
@@ -21,6 +19,9 @@ const char* passwordArg = "password";
 const char* titleFileName = "title.txt";
 const char* usernameFileName = "username.txt";
 const char* passwordFileName = "password.txt";
+
+const uint8_t PIN_STOPPED;
+bool cncStatus;
 
 WebServer server(80);
 
@@ -62,57 +63,6 @@ void setupIndexPage() {
     indexPageFile.close();
 }
 
-void writeFile(const char* filename, String data) {
-    File file = FILESYSTEM.open(filename, "w", true);
-    if (!file) {
-        throw new std::runtime_error("Cannot open write file " + std::string(filename));
-    }
-
-    for (size_t i = 0; i < data.length(); i++) {
-        file.write(data[i]);
-    }
-}
-void writeFile(const char* filename, std::string data) {
-    File file = FILESYSTEM.open(filename, "w", true);
-    if (!file) {
-        throw new std::runtime_error("Cannot open write file " + std::string(filename));
-    }
-
-    for (size_t i = 0; i < data.length(); i++) {
-        file.write(data[i]);
-    }
-}
-
-
-void setTitle(String newTitle) {
-    return writeFile(titleFileName, newTitle);
-}
-void setUsername(String newUsername) {
-    return writeFile(usernameFileName, newUsername);
-}
-void setPassword(String newPassword) {
-    return writeFile(passwordFileName, newPassword);
-}
-void setTitle(std::string newTitle) {
-    return writeFile(titleFileName, newTitle);
-}
-void setUsername(std::string newUsername) {
-    return writeFile(usernameFileName, newUsername);
-}
-void setPassword(std::string newPassword) {
-    return writeFile(passwordFileName, newPassword);
-}
-
-std::string getTitle() {
-    return readFile(titleFileName);
-}
-std::string getUsername() {
-    return readFile(usernameFileName);
-}
-std::string getPassword() {
-    return readFile(passwordFileName);
-}
-
 /*
  * setup function
 */
@@ -151,7 +101,7 @@ void setup(void) {
     });
 
     /*handling update data: title, username and password */
-    server.on("/update-data", HTTP_POST, []() {
+    server.on("/update-credentials", HTTP_POST, []() {
         bool isCorrectQuery = (server.hasArg(titleArg) && server.hasArg(usernameArg) && server.hasArg(passwordArg));
         if (!isCorrectQuery) {
             server.send(400, "text/plain", "Query is incorrect");
@@ -163,11 +113,20 @@ void setup(void) {
         setPassword(server.arg(passwordArg));
     });
 
-    server.on("/get-data", HTTP_GET, []() {
+    server.on("/get-credentials", HTTP_GET, []() {
         std::string result = "{"
 "title: " + getTitle() + ",";
 "username: " + getUsername() + ",";
-"password: " + getPassword() + ",";
+"password: " + getPassword();
+"}";
+
+        server.sendHeader("Content-Type", "applcation/json");
+        server.send(200, "application/json", result.c_str());
+    });
+
+    server.on("/get-status", HTTP_GET, []() {
+        std::string result = "{"
+"title: " + getTitle();
 "}";
 
         server.sendHeader("Content-Type", "applcation/json");

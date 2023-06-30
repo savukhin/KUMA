@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  database:
+    image: postgres:15
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./volumes/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+      
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_AUTO_MIGRATE: true
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+
+      BACKEND_PORT: 8080
+
+      MODE: release
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    volumes:
+      - ./volumes/backend:/app

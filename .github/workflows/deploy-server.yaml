@@ -30,3 +30,6 @@ jobs:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAMBOTSECRET }}
     steps:
     - run: pwd
+    - run: echo $TELEGRAM_BOT_TOKEN
+    - name: Run server
+      run: docker compose up --build -d

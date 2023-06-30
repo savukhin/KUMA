@@ -17,5 +17,5 @@ type Config struct {
 	TelegramBotToken string `envconfig:"TELEGRAM_BOT_TOKEN" required:"true"`
 
 	Mode string `envconfig:"MODE" default:"debug"`
-	Port string `envconfig:"PORT" default:":8080"`
+	Port string `envconfig:"BACKEND_PORT" default:":8080"`
 }

@@ -1,8 +1,6 @@
 package tg
 
 import (
-	"os"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -18,7 +16,7 @@ type TelegramBot struct {
 }
 
 func NewTelegramBot(token string) (*TelegramBot, error) {
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_APITOKEN"))
+	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
 	}

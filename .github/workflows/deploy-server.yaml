@@ -22,5 +22,11 @@ jobs:
       - run: ls
       - run: ls ./server
       - name: Test
-        # run: cd server && ls && go test ./...
-        run: go test ./server/...
+        run: cd server && ls && go test ./...
+
+  deploy:
+    runs-on: self-hosted
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAMBOTSECRET }}
+    steps:
+    - run: pwd

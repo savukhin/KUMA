@@ -20,5 +20,6 @@ jobs:
           # cache-dependency-path: server/go.sum
       - run: go version
       - run: ls
+      - run: ls ./server
       - name: Test
-        run: go test ./server/...
+        run: go test server/...

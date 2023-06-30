@@ -1,8 +1,8 @@
 version: '3.9'
 services:
-  database:
+  database-kuma:
     image: postgres:15
-    container_name: database
+    container_name: database-kuma
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
@@ -30,6 +30,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - database
+      - database-kuma
     volumes:
       - ./volumes/backend:/app

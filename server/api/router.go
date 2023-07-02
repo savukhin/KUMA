@@ -35,7 +35,7 @@ func SetupRouter(db *gorm.DB, secretKey interface{}, logger *zap.Logger, onStopS
 	auth.Get("/restricted", jwtMiddleware, restrictedUser)
 
 	cnc := v1.Group("/cnc")
-	cnc.Get("/update-status", jwtMiddleware, updateStatus(db, validate, onStopStatus))
+	cnc.Post("/update-status", jwtMiddleware, updateStatus(db, validate, onStopStatus))
 
 	return app
 }

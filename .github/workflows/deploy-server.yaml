@@ -1,7 +1,7 @@
 name: Deploy server
 on:
   push:
-    branches: [ "master", "dev" ]
+    branches: [ "master" ]
 jobs:
   tests:
     runs-on: ubuntu-latest

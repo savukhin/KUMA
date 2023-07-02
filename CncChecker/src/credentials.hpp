@@ -1,4 +1,10 @@
+#pragma once
+
 #include "utils.hpp"
+
+const char* titleFileName = "title.txt";
+const char* usernameFileName = "username.txt";
+const char* passwordFileName = "password.txt";
 
 void setTitle(String newTitle) {
     return writeFile(titleFileName, newTitle);
@@ -19,12 +25,12 @@ void setPassword(std::string newPassword) {
     return writeFile(passwordFileName, newPassword);
 }
 
-std::string getTitle() {
+String getTitle() {
     return readFile(titleFileName);
 }
-std::string getUsername() {
+String getUsername() {
     return readFile(usernameFileName);
 }
-std::string getPassword() {
+String getPassword() {
     return readFile(passwordFileName);
 }

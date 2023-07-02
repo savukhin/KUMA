@@ -1,12 +1,15 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include <HTTPClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Update.h>
 #include <string.h>
 
+#include "cnc.hpp"
 #include "utils.hpp"
 #include "credentials.hpp"
+#include "requests.hpp"
 
 const char* host = "esp32";
 const char* ssid = "xxx";
@@ -16,14 +19,13 @@ const char* titleArg = "title";
 const char* usernameArg = "username";
 const char* passwordArg = "password";
 
-const char* titleFileName = "title.txt";
-const char* usernameFileName = "username.txt";
-const char* passwordFileName = "password.txt";
-
-const uint8_t PIN_STOPPED;
-bool cncStatus;
+const uint8_t PIN_STOPPED = 1;
+const uint8_t PIN_WORKING = 2;
+const uint8_t PIN_BROKEN = 3;
+Cnc cnc;
 
 WebServer server(80);
+Tokens tokens;
 
 File *titleFile;
 File *usernameFile;
@@ -32,24 +34,7 @@ File *passwordFile;
 const char* indexPage;
 const char* indexPageFallback = "Error loading page: check if SPIFFS works";
 
-std::string readFile(File &file) {
-    std::string result;
-
-    while (file.available()){
-        result.push_back(file.read());
-    }
-
-    return result;
-}
-
-std::string readFile(const char* filename) {
-    File file = FILESYSTEM.open(filename);
-    if (!file) {
-        throw new std::runtime_error("Cannot open read file " + std::string(filename));
-    }
-
-    return readFile(file);
-}
+String serverName = "kuma.slyfoxprod.ru";
 
 void setupIndexPage() {
     File indexPageFile = FILESYSTEM.open("/text.txt");
@@ -63,10 +48,21 @@ void setupIndexPage() {
     indexPageFile.close();
 }
 
+
 /*
  * setup function
 */
 void setup(void) {
+    tokens = getTokens(serverName);
+
+    cnc = Cnc(PIN_STOPPED, PIN_WORKING, PIN_BROKEN);
+    void (*onChange)(CncStatus&) = [](CncStatus &new_status) {
+    // std::function<void (CncStatus&)> onChange = [&](CncStatus &new_status) {
+        tokens = sendStatus(serverName, tokens, new_status);
+    };
+
+    cnc.addOnChange(onChange);
+
     setupIndexPage();
 
     Serial.begin(115200);
@@ -114,10 +110,10 @@ void setup(void) {
     });
 
     server.on("/get-credentials", HTTP_GET, []() {
-        std::string result = "{"
-"title: " + getTitle() + ",";
-"username: " + getUsername() + ",";
-"password: " + getPassword();
+        String result = "{"
+"title: " + getTitle() + ","
+"username: " + getUsername() + ","
+"password: " + getPassword() +
 "}";
 
         server.sendHeader("Content-Type", "applcation/json");
@@ -126,7 +122,7 @@ void setup(void) {
 
     server.on("/get-status", HTTP_GET, []() {
         std::string result = "{"
-"title: " + getTitle();
+"title: " + statusToInt(cnc.getStatus());
 "}";
 
         server.sendHeader("Content-Type", "applcation/json");
@@ -163,5 +159,6 @@ void setup(void) {
 
 void loop(void) {
     server.handleClient();
+    cnc.loop();
     delay(1);
 }

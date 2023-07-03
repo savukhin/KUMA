@@ -1,0 +1,40 @@
+name: Deploy server
+on:
+  push:
+    branches: [ "master" ]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.19.5' ]
+
+    steps:
+      - name: cd into repo
+        uses: actions/checkout@v3
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+          go-version-file: './server/go.mod'
+          cache-dependency-path: server/go.sum
+      - run: go version
+      - run: ls
+      - run: ls ./server
+      - name: Test
+        run: cd server && ls && go test ./...
+
+  deploy:
+    runs-on: self-hosted
+    # needs:
+    #   tests
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAMBOTSECRET }}
+    steps:
+    - name: cd into repo
+      uses: actions/checkout@v3
+    - run: pwd
+    - run: ls
+    - run: echo $TELEGRAM_BOT_TOKEN
+    - name: Run server
+      run: docker compose up --build -d

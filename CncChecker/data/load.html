@@ -1,0 +1,114 @@
+<html>
+    <head>
+        <style type="text/css">
+            html {
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                background-color: #464646;
+
+                padding: 10px 0 0 0;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+
+                padding: 10px;
+                box-sizing: border-box;
+                background-color: white;
+
+                border: solid black 1px;
+                border-radius: 10px;
+
+                height: fit-content;
+                width: auto;
+
+                box-shadow: 4px 1px 10px 1px rgba(10, 10, 10, 1);
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                align-content: center;
+                align-items: center;
+
+                width: 80vw;
+                max-width: 1000px;
+                height: 100px;
+
+                margin-bottom: 32px;
+            }
+
+            .input-group {
+                display: grid;
+                grid-template-columns: 100px auto;
+
+                width: 100%;
+                margin-bottom: 0.6em;
+            }
+
+            button {
+                width: 400px;
+                max-width: 100%;
+            }
+
+            #prg { 
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <form action="/update-credentials" method="POST" enctype="application/json">
+            <div class="input-group">
+                <label for="title">Title:</label>
+                <input id="title"/>
+            </div>
+            <div class="input-group">
+                <label for="username">Username:</label>
+                <input id="username"/>
+            </div>
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input id="password"/>
+            </div>
+            <button type="submit">Send</button>
+        </form>
+
+        <form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>
+            <input type='file' name='update'>
+            <input type='submit' value='Update'>
+        </form>
+        <!-- <div id='prg'>progress: 0%</div> -->
+    </body>
+
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <script>
+        $('form').submit(function(e){
+            e.preventDefault();
+            var form = $('#upload_form')[0];
+            var data = new FormData(form);
+            $.ajax({
+                url: '/update-firmware',
+                type: 'POST',
+                data: data,
+                contentType: false,
+                processData:false,
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener('progress', function(evt) {
+                        if (evt.lengthComputable) {
+                            var per = evt.loaded / evt.total;
+                            $('#prg').html('progress: ' + Math.round(per*100) + '%');
+                        }
+                    }, false);
+                    return xhr;
+                },
+                success:function(d, s) {
+                    console.log('success!')
+                },
+                error: function (a, b, c) {
+                }
+            });
+        });
+    </script>
+</html>

@@ -21,7 +21,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
-      POSTGRES_HOST: database
+      POSTGRES_HOST: database-kuma
       POSTGRES_PORT: 5431
       POSTGRES_AUTO_MIGRATE: true
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}

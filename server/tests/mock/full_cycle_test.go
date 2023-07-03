@@ -159,7 +159,7 @@ func TestFull(t *testing.T) {
 
 	require.Len(t, stopped, 0)
 
-	req = httptest.NewRequest("GET", "/api/v1/cnc/update-status", &buf)
+	req = httptest.NewRequest("POST", "/api/v1/cnc/update-status", &buf)
 	req.Header.Set("Content-Type", fiber.MIMEApplicationJSON)
 	req.Header.Set(api.AuthorizationHeaderName, "Bearer "+accessToken)
 

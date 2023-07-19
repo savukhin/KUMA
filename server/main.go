@@ -7,7 +7,6 @@ import (
 	"server/api"
 	"server/config"
 	"server/db"
-	"server/tg"
 
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
@@ -45,13 +44,13 @@ func main() {
 		log.Fatalf("rsa.GenerateKey: %v", err)
 	}
 
-	bot, err := tg.NewTelegramBot(cfg.TelegramBotToken)
-	if err != nil {
-		log.Fatalf("cannot start telegram bot: %v", err)
-	}
+	// bot, err := tg.NewTelegramBot(cfg.TelegramBotToken)
+	// if err != nil {
+	// 	log.Fatalf("cannot start telegram bot: %v", err)
+	// }
 
 	onStopStatus := func(cncTitle string) {
-		bot.BroadcastCheckedInEmployees("Cnc stopped "+cncTitle, gormDB, logger)
+		// bot.BroadcastCheckedInEmployees("Cnc stopped "+cncTitle, gormDB, logger)
 	}
 
 	app := api.SetupRouter(gormDB, privateKey.Public(), logger, onStopStatus)

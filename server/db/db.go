@@ -15,14 +15,20 @@ func autoMigrate(gormdb *gorm.DB) error {
 }
 
 func ConnectDatabase(cfg *config.Config) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
 		cfg.PostgresHost, cfg.PostgresUser,
 		cfg.PostgresPassword, cfg.PostgresDB,
 		cfg.PostgresPort,
 	)
 
+	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	// 	cfg.PostgresUser, cfg.PostgresPassword,
+	// 	cfg.PostgresHost, cfg.PostgresPort,
+	// 	cfg.PostgresDB,
+	// )
+
 	postgresConn := postgres.Open(dsn)
-	gormDB, err := gorm.Open(postgresConn)
+	gormDB, err := gorm.Open(postgresConn, &gorm.Config{})
 
 	if err != nil {
 		return gormDB, err

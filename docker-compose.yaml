@@ -1,8 +1,8 @@
 version: '3.9'
 services:
-  database-kuma:
+  database:
     image: postgres:15
-    container_name: database-kuma
+    container_name: database
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
@@ -21,15 +21,18 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
-      POSTGRES_HOST: database-kuma
+      POSTGRES_HOST: database
       POSTGRES_PORT: 5431
-      POSTGRES_AUTO_MIGRATE: true
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      POSTGRES_AUTO_MIGRATE: "true"
+      TELEGRAM_BOT_TOKEN: asdf
       BACKEND_PORT: 8080
       MODE: release
     ports:
-      - "8081:8080"
+      - "8080:8080"
     depends_on:
-      - database-kuma
+      - database
     volumes:
       - ./volumes/backend:/app
+
+volumes:
+  data:
